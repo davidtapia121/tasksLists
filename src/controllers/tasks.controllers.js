@@ -43,24 +43,31 @@ const createTask = async (req, res, next) => {
     next(error)
   }
   // req.body tendrá los datos enviados desde el cliente
-  res.send('Creating a task');
 };
 
 // Función para eliminar una tarea
 // Normalmente responde a un DELETE /tasks/:id
 const deleteTask = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const result = await pool.query('DELETE * FROM task WHERE id = $1', [id]);
-    if (result.rows.length === 0)
+    const { id } = req.params;
+
+    const result = await pool.query(
+      "DELETE FROM task WHERE id = $1",
+      [id]
+    );
+
+    if (result.rowCount === 0)
       return res.status(404).json({
         message: "Task not found",
       });
-    res.json(result.rows[0]);
+
+    return res.sendStatus(204); // respuesta correcta para DELETE
+
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
+
 
 // Función para actualizar una tarea existente
 // Normalmente responde a un PUT o PATCH /tasks/:id
